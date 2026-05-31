@@ -19,6 +19,10 @@ const candidatesMock = [
   { candidateId: 3, applicationId: 12, fullName: 'Marta Sánchez',  currentInterviewStep: 'HR Interview',        averageScore: 2 }
 ];
 
+const singleCandidateMock = [
+  { candidateId: 1, applicationId: 10, fullName: 'Ana García', currentInterviewStep: 'CV Review', averageScore: 3 }
+];
+
 describe('Visualización de la página de posición', () => {
   beforeEach(() => {
     cy.intercept('GET', 'http://localhost:3010/positions/1/interviewFlow', interviewFlowMock).as('getInterviewFlow');
@@ -49,6 +53,39 @@ describe('Visualización de la página de posición', () => {
     });
     cy.get('[data-testid="stage-column"]').eq(2).within(() => {
       cy.get('[data-testid="candidate-card"]').should('have.length', 1).and('contain.text', 'Marta Sánchez');
+    });
+  });
+});
+
+describe('Cambio de fase de un candidato', () => {
+  beforeEach(() => {
+    cy.intercept('GET', '**/positions/1/interviewFlow', interviewFlowMock).as('getInterviewFlow');
+    cy.intercept('GET', '**/positions/1/candidates', singleCandidateMock).as('getCandidates');
+    cy.visit('/positions/1');
+    cy.wait(['@getInterviewFlow', '@getCandidates']);
+  });
+
+  it('la tarjeta del candidato aparece en la nueva fase tras el movimiento', () => {
+    cy.intercept('PUT', '**/candidates/1', { statusCode: 200, body: {} }).as('updateCandidate');
+
+    cy.get('[data-testid="candidate-card"]').first().dragTo('[data-testid="stage-column"]:eq(1)');
+
+    cy.get('[data-testid="stage-column"]').eq(0).within(() => {
+      cy.get('[data-testid="candidate-card"]').should('not.exist');
+    });
+    cy.get('[data-testid="stage-column"]').eq(1).within(() => {
+      cy.get('[data-testid="candidate-card"]').should('contain.text', 'Ana García');
+    });
+  });
+
+  it('el cambio de fase queda registrado en el backend', () => {
+    cy.intercept('PUT', '**/candidates/1', { statusCode: 200, body: {} }).as('updateCandidate');
+
+    cy.get('[data-testid="candidate-card"]').first().dragTo('[data-testid="stage-column"]:eq(1)');
+
+    cy.wait('@updateCandidate').its('request.body').should('deep.equal', {
+      applicationId: 10,
+      currentInterviewStep: 2
     });
   });
 });
