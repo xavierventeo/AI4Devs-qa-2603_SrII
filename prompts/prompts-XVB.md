@@ -1,17 +1,20 @@
 # Prompts creación estructura IA para ejercicio pruebas E2E
 
-## Inicializar contexto de claude
+## Etapa 1: Creación artefactos IA
+
+
+### Inicializar contexto de claude
 /init 
 
-## Prompt para crear un skill Cypress
+### Prompt 1: Crear un skill Cypress
 
 Crea una skill para con el siguiente contenido:
 
-# Cypress E2E
+**Cypress E2E**
 
 Tu objetivo es generar pruebas E2E mantenibles utilizando Cypress.
 
-## Reglas
+**Reglas**
 
 - Validar comportamiento observable.
 - Priorizar selectores `data-testid`.
@@ -22,7 +25,7 @@ Tu objetivo es generar pruebas E2E mantenibles utilizando Cypress.
 - Utilizar datos estables y reproducibles.
 - Realizar aserciones explícitas y alineadas con el comportamiento esperado.
 
-## Generación de pruebas
+**Generación de pruebas**
 
 Cuando generes tests:
 
@@ -35,15 +38,15 @@ Cuando generes tests:
 Genera el frontmatter correcto con nombre y descripción
 
 
-## Prompt para crear el agente QA
+### Prompt 2: Crear el agente QA
 
 Crea un subagente llamado qa-agent.
 
-Objetivo:
+**Objetivo:**
 
 Especialista en QA Automation.
 
-Responsabilidades:
+**Responsabilidades:**
 
 - Convertir requisitos en escenarios testeables.
 - Generar especificaciones BDD.
@@ -52,7 +55,7 @@ Responsabilidades:
 - Detectar flakiness.
 - Validar integración frontend-backend.
 
-Reglas:
+**Reglas:**
 
 - No inventar funcionalidades.
 - No inventar endpoints.
@@ -65,18 +68,18 @@ Reglas:
 Genera el frontmatter correcto con nombre y descripción
 
 
-## Prompt para crear el comando para refinar specs
+### Prompt 3: Crear comando para refinar specs
 Crea un comando llamado qa-refine-spec.
 
-Uso:
+**Uso:**
 
 /qa-refine-spec "<descripción funcional>"
 
-Responsabilidad:
+**Responsabilidad:**
 
 Convertir una descripción funcional en especificación Gherkin.
 
-Formato de salida:
+**Formato de salida:**
 
 Feature:
 Scenario:
@@ -84,7 +87,7 @@ Given:
 When:
 Then:
 
-Reglas:
+**Reglas:**
 
 - No inventar funcionalidades.
 - No añadir escenarios que no estén implícitos.
@@ -94,15 +97,15 @@ Reglas:
 
 Genera el frontmatter correcto con nombre y descripción
 
-## Prompt para crear el comando para crear pruebas E2E
+### Prompt 4: Crear comando para crear pruebas E2E
 
 Crea un comando llamado qa-create-e2e.
 
-Uso:
+**Uso:**
 
 /qa-create-e2e <spec-name> "<gherkin>"
 
-Responsabilidad:
+**Responsabilidad:**
 
 - Analizar el repositorio.
 - Localizar la funcionalidad correspondiente.
@@ -110,14 +113,14 @@ Responsabilidad:
 - Identificar endpoints.
 - Generar tests Cypress.
 
-Debe:
+**Debe:**
 
 - Utilizar qa-agent.
 - Utilizar la skill cypress-e2e.
 - Crear o actualizar los tests necesarios.
 - No generar pruebas fuera del alcance del Gherkin recibido.
 
-Ubicación obligatoria:
+**Ubicación obligatoria:**
 
 Generar los tests en la carpeta frontend/cypress/integration/
 El nombre del fichero será <spec-name>.spec.js.
@@ -126,18 +129,18 @@ Si no existe, crearlo.
 No generar ficheros Cypress fuera de esa carpeta.
 
 
-## Prompt para crear el comando para revisar tests generados
+### Prompt 5: Crear comando para revisar tests generados
 Crea un comando llamado qa-review-e2e.
 
-Uso:
+**Uso:**
 
 /qa-review-e2e "<gherkin>"
 
-Responsabilidad:
+**Responsabilidad:**
 
 Revisar que los tests generados cubren completamente la especificación recibida.
 
-Validar:
+**Validar:**
 
 - Cobertura funcional.
 - Calidad Cypress.
@@ -145,7 +148,7 @@ Validar:
 - Riesgo de flakiness.
 - Validación backend.
 
-Salida:
+**Salida:**
 
 - Aprobado / No aprobado.
 - Hallazgos Critical.
@@ -153,8 +156,34 @@ Salida:
 - Hallazgos Minor.
 - Recomendaciones.
 
-## Prompts ajuste comandos para trabajar con ficheros como argumento
+### Prompts 6: Ajustes comandos para trabajar con ficheros como argumento
 
 Revisa el comando qa-refine-spec.md para que genere el resultado en un fichero en formato de salida .feature bajo la carpeta bdd-specs                                                   
 
 Revisa los comandos qa-create-e2e y qa-review-e2e para que en lugar de recibir un texto <gherkin> reciban el fichero .feature ubicado en la carpeta bdd-specs                                 
+
+## Etapa 2: Testing 
+
+### Prompts 1: Crear la especificación Gherkin del ejercicio
+/qa-refine-spec "Carga de la Página de Position:
+- Verifica que el título de la posición se muestra correctamente.
+- Verifica que se muestran las columnas correspondientes a cada fase del proceso de contratación.
+- Verifica que las tarjetas de los candidatos se muestran en la columna correcta según su fase actual."
+
+
+Debes crear pruebas E2E para verificar:
+
+- La carga de la página Position.
+- Que se muestra el título de la posición.
+- Que se muestran las columnas correspondientes a cada fase del proceso de contratación.
+- Que las tarjetas de candidatos se muestran en la columna correcta.
+
+Además:
+
+- Simular el arrastre de un candidato a otra fase.
+- Verificar que la tarjeta se mueve.
+- Verificar que se ejecuta correctamente PUT /candidate/:id."
+
+
+### Prompts 2: Crear los tests
+/qa-create-e2e position @bdd-specs/visualizacion-de-la-pagina-de-posicion.feature  
