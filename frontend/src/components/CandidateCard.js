@@ -6,6 +6,7 @@ const CandidateCard = ({ candidate, index, onClick }) => (
     <Draggable key={candidate.id} draggableId={candidate.id} index={index}>
         {(provided) => (
             <Card
+                data-testid="candidate-card"
                 className="mb-2"
                 ref={provided.innerRef}
                 {...provided.draggableProps}

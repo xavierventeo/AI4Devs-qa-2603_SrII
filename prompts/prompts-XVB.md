@@ -1,7 +1,9 @@
 # Prompts creación estructura IA para ejercicio pruebas E2E
 
-## Etapa 1: Creación artefactos IA
+## Etapa 0: Instalar Cypress
+npm install cypress --save-dev
 
+## Etapa 1: Creación artefactos IA
 
 ### Inicializar contexto de claude
 /init 
@@ -162,28 +164,55 @@ Revisa el comando qa-refine-spec.md para que genere el resultado en un fichero e
 
 Revisa los comandos qa-create-e2e y qa-review-e2e para que en lugar de recibir un texto <gherkin> reciban el fichero .feature ubicado en la carpeta bdd-specs                                 
 
-## Etapa 2: Testing 
+## Etapa 2: Creación de tests 
 
-### Prompts 1: Crear la especificación Gherkin del ejercicio
+### Prompts 1: Crear la especificación del test Carga de la Página de Position
 /qa-refine-spec "Carga de la Página de Position:
 - Verifica que el título de la posición se muestra correctamente.
 - Verifica que se muestran las columnas correspondientes a cada fase del proceso de contratación.
 - Verifica que las tarjetas de los candidatos se muestran en la columna correcta según su fase actual."
 
-
-Debes crear pruebas E2E para verificar:
-
-- La carga de la página Position.
-- Que se muestra el título de la posición.
-- Que se muestran las columnas correspondientes a cada fase del proceso de contratación.
-- Que las tarjetas de candidatos se muestran en la columna correcta.
-
-Además:
-
-- Simular el arrastre de un candidato a otra fase.
-- Verificar que la tarjeta se mueve.
-- Verificar que se ejecuta correctamente PUT /candidate/:id."
-
-
-### Prompts 2: Crear los tests
+### Prompts 2: Crear los tests Carga de la Página de Position
 /qa-create-e2e position @bdd-specs/visualizacion-de-la-pagina-de-posicion.feature  
+
+### Prompts 3: Revisa los tests Carga de la Página de Position
+/qa-review-e2e @bdd-specs/visualizacion-de-la-pagina-de-posicion.feature  
+
+### Prompts 4: Crear la especificación del test Cambio de Fase de un Candidato
+/qa-refine-spec "Cambio de Fase de un Candidato:
+- Simula el arrastre de una tarjeta de candidato de una columna a otra.
+- Verifica que la tarjeta del candidato se mueve a la nueva columna.
+- Verifica que la fase del candidato se actualiza correctamente en el backend mediante el endpoint PUT /candidate/:id."
+
+### Prompts 5: Crear los test Cambio de Fase de un Candidato
+/qa-create-e2e position @bdd-specs/cambio-de-fase-de-un-candidato.feature
+
+### Prompts 6: Revisa los tests Cambio de Fase de un Candidato
+/qa-review-e2e @bdd-specs/visualizacion-de-la-pagina-de-posicion.feature  
+
+## Etapa 3: Ejecución de tests
+
+### 1. Ejecución "Manual de los tests"
+
+Desde el directorio raiz del repo:
+
+cd frontend
+npx cypress open
+
+Si es la primera vez, sigue el asistente:
+- Selecciona E2E Testing.
+- Aceptar la creación de la configuración de Cypress "cypress.config.js"
+- Eligir un navegador: Chrome.
+En la ventana de Cypress, selecciona el test position.cy.ts.
+El test se ejecuta manualmente en el navegador.
+
+### 2. Tests fail
+
+Los 5 tests han fallado. Ejecutar con Claude el siguiente prompt para solucionarlo
+
+**Prompt 2.1: Fix the tests**
+Ejecuta npx cypress run y mira de entender por qué fallan los tests y corrigelos. 
+
+**Prompt 2.2: Informe resolución**
+Crea una carpeta docs y genera un informe conciso en formato markdown con los problemas identificados en los 5 tests y cual ha sido el fix                                                      
+

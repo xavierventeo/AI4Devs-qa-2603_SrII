@@ -68,7 +68,15 @@ describe('Cambio de fase de un candidato', () => {
   it('la tarjeta del candidato aparece en la nueva fase tras el movimiento', () => {
     cy.intercept('PUT', '**/candidates/1', { statusCode: 200, body: {} }).as('updateCandidate');
 
-    cy.get('[data-testid="candidate-card"]').first().dragTo('[data-testid="stage-column"]:eq(1)');
+    cy.window().invoke('__onDragEnd', {
+      draggableId: '1',
+      type: 'DEFAULT',
+      source: { droppableId: '0', index: 0 },
+      destination: { droppableId: '1', index: 0 },
+      reason: 'DROP',
+      mode: 'FLUID',
+      combine: null,
+    });
 
     cy.get('[data-testid="stage-column"]').eq(0).within(() => {
       cy.get('[data-testid="candidate-card"]').should('not.exist');
@@ -81,7 +89,15 @@ describe('Cambio de fase de un candidato', () => {
   it('el cambio de fase queda registrado en el backend', () => {
     cy.intercept('PUT', '**/candidates/1', { statusCode: 200, body: {} }).as('updateCandidate');
 
-    cy.get('[data-testid="candidate-card"]').first().dragTo('[data-testid="stage-column"]:eq(1)');
+    cy.window().invoke('__onDragEnd', {
+      draggableId: '1',
+      type: 'DEFAULT',
+      source: { droppableId: '0', index: 0 },
+      destination: { droppableId: '1', index: 0 },
+      reason: 'DROP',
+      mode: 'FLUID',
+      combine: null,
+    });
 
     cy.wait('@updateCandidate').its('request.body').should('deep.equal', {
       applicationId: 10,

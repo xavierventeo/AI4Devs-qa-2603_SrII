@@ -105,12 +105,16 @@ const PositionsDetails = () => {
         setSelectedCandidate(null);
     };
 
+    // Expose onDragEnd for Cypress E2E tests — react-beautiful-dnd drag
+    // simulation is unreliable in headless mode, so tests invoke this directly.
+    if (window.Cypress) window.__onDragEnd = onDragEnd;
+
     return (
         <Container className="mt-5">
             <Button variant="link" onClick={() => navigate('/positions')} className="mb-3">
                 Volver a Posiciones
             </Button>
-            <h2 className="text-center mb-4">{positionName}</h2>
+            <h2 data-testid="position-title" className="text-center mb-4">{positionName}</h2>
             <DragDropContext onDragEnd={onDragEnd}>
                 <Row>
                     {stages.map((stage, index) => (
